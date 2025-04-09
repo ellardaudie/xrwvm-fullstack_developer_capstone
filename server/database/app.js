@@ -58,18 +58,51 @@ app.get('/fetchReviews/dealer/:id', async (req, res) => {
 
 // Express route to fetch all dealerships
 app.get('/fetchDealers', async (req, res) => {
-//Write your code here
-});
+    try {
+      const dealerships = await Dealerships.find(); // Fetch all dealerships
+      res.json(dealerships); // Send them back as a JSON response
+    } catch (error) {
+      res.status(500).json({ error: 'Error fetching dealerships' }); // Handle errors
+    }
+  });
 
-// Express route to fetch Dealers by a particular state
+// Express route to fetch dealerships by state
 app.get('/fetchDealers/:state', async (req, res) => {
-//Write your code here
-});
+    try {
+      const state = req.params.state;
+      const dealerships = await Dealerships.find({ state: state }); // Fetch dealerships by state
+      if (dealerships.length > 0) {
+        res.json(dealerships); // Send the dealerships back as a JSON response
+      } else {
+        res.status(404).json({ message: 'No dealerships found in this state' }); // Handle case where no dealerships are found
+      }
+    } catch (error) {
+      console.error('Error fetching dealerships:', error);
+      res.status(500).json({ error: 'Error fetching dealerships' }); // Handle errors
+    }
+  });
+  
 
-// Express route to fetch dealer by a particular id
+// Express route to fetch a specific dealership by ID
+
+
 app.get('/fetchDealer/:id', async (req, res) => {
-//Write your code here
-});
+    try {
+      const id = req.params.id;  // Getting the ID from the request
+      const dealership = await Dealerships.findOne({ id: id }); // Adjust query based on your data structure (e.g., { id: id })
+  
+      if (dealership) {
+        res.json(dealership); // Send dealership back as a JSON response
+      } else {
+        res.status(404).json({ error: 'Dealership not found' }); // If not found, send an error message
+      }
+    } catch (error) {
+      res.status(500).json({ error: 'Error fetching dealership' }); // Handle unexpected server errors
+    }
+  });
+  
+
+
 
 //Express route to insert review
 app.post('/insert_review', express.raw({ type: '*/*' }), async (req, res) => {
